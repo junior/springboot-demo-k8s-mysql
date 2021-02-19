@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pvc-oci-bv
+  name: mysql-pvc
 spec:
   storageClassName: oci-bv
   accessModes:

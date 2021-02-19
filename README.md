@@ -4,6 +4,8 @@ SpringBoot Demo with MySQL running on Kubernetes
 
 ## Build Demo App image
 
+Skip this step if you just want to test the app on Kubernetes
+
 ```shell
 docker build --pull --no-cache --squash --rm --progress plain -f Dockerfile -t sbdemo .
 ```
@@ -32,6 +34,16 @@ kubectl create secret generic mysql-secrets \
   --from-literal=database=DB
 ```
 
+### Clone the repo if using OCI CloudShell or local
+
+```shell
+git clone https://github.com/junior/springboot-demo-k8s-mysql.git
+```
+
+```shell
+cd springboot-demo-k8s-mysql/kubernetes
+```
+
 ### Deploy MySQL 5.7
 
 #### Create PVC for MySQl on Oracle Cloud Infrastructure using CSI for Block Volume
@@ -43,6 +55,8 @@ kubectl apply -f mysql-pvc-oci-bv.yaml
 > Use mysql-pvc-manual.yaml if deploying local
 
 #### Create Service for MySQL
+
+Note: this step will create a new LoadBalancer on the infrastructure
 
 ```shell
 kubectl apply -f mysql-svc.yaml
