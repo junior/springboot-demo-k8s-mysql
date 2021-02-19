@@ -70,13 +70,15 @@ kubectl apply -f mysql-dep.yaml
 
 #### Create Service for Demo App
 
-Note: this step will create a new LoadBalancer on the infrastructure
+Note: This step will create a new LoadBalancer on the infrastructure
 
 ```shell
 kubectl apply -f app-svc.yaml
 ```
 
 #### Create Deployment for Demo App
+
+Note: The app will create the necessary tables on the MySQL on the first run
 
 ```shell
 kubectl apply -f app-dep.yaml
