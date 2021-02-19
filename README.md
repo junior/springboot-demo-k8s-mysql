@@ -56,8 +56,6 @@ kubectl apply -f mysql-pvc-oci-bv.yaml
 
 #### Create Service for MySQL
 
-Note: this step will create a new LoadBalancer on the infrastructure
-
 ```shell
 kubectl apply -f mysql-svc.yaml
 ```
@@ -71,6 +69,8 @@ kubectl apply -f mysql-dep.yaml
 ### Deploy the Spring Boot Demo App
 
 #### Create Service for Demo App
+
+Note: this step will create a new LoadBalancer on the infrastructure
 
 ```shell
 kubectl apply -f app-svc.yaml
