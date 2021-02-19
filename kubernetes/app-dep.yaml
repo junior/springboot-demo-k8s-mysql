@@ -18,7 +18,7 @@ spec:
       containers:
       - name: demoapp
         image: ghcr.io/junior/springbootdemo:1.0.0
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         env:
         - name: MYSQL_HOST
           value: mysql
