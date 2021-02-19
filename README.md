@@ -40,7 +40,7 @@ kubectl create secret generic mysql-secrets \
 kubectl apply -f mysql-pvc-oci-bv.yaml
 ```
 
-> Use mysql-pv-manual.yaml if deploying local
+> Use mysql-pvc-manual.yaml if deploying local
 
 #### Create Service for MySQL
 
@@ -54,7 +54,27 @@ kubectl apply -f mysql-svc.yaml
 kubectl apply -f mysql-dep.yaml
 ```
 
-#### Optional: Insert Data
+### Deploy the Spring Boot Demo App
+
+#### Create Service for Demo App
+
+```shell
+kubectl apply -f app-svc.yaml
+```
+
+#### Create Deployment for Demo App
+
+```shell
+kubectl apply -f app-dep.yaml
+```
+
+#### Optional: Check logs
+
+```shell
+kubectl logs -l app=demoapp --follow
+```
+
+#### Optional: Insert Data to MySQL
 
 ##### Connect to mysql
 
@@ -87,28 +107,73 @@ Bye
 pod "mysql-client" deleted
 ```
 
-### Deploy the Spring Boot Demo App
-
-#### Create Service for Demo App
-
-```shell
-kubectl apply -f app-svc.yaml
-```
-
-#### Create Deployment for Demo App
-
-```shell
-kubectl apply -f app-dep.yaml
-```
-
-#### Optional: Check logs
-
-```shell
-kubectl logs -l app=demoapp --follow
-```
-
 #### Optional: Test with port-forward
 
 ```shell
-kubectl logs -l app=demoapp --follow
+kubectl port-forward deploy/demoapp 8081:8081
 ```
+
+Navigate to http://localhost:8081/users
+
+#### Test with LoadBalancer IP Address
+
+```shell
+kubectl get svc
+```
+
+Navigate to http://<demoapp_EXTERNAL_IP_ADDRESS>/users
+
+## Create Horizontal Pod Autoscaler for Demo App
+
+### Install metrics server
+
+```shell
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+### Create autoscale for Demo App
+
+```shell
+kubectl autoscale deployment demoapp --cpu-percent=30 --min=1 --max=10
+```
+
+### Check HPA
+
+```shell
+kubectl get hpa
+```
+
+### Increase load
+
+```shell
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://demoapp/users; done"
+```
+
+Within a minute or so, we should see the higher CPU load by executing:
+
+```shell
+kubectl get hpa
+```
+
+## Prometheus and Grafana
+
+### Install the grafana-prometheus stack
+
+```shell
+helm install prometheus prometheus-community/kube-prometheus-stack
+```
+
+### get the grafana admin password
+
+```shell
+kubectl get secret prometheus-grafana \
+ -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+ ```
+
+### Test Grafana with port-forward
+
+ ```shell
+kubectl port-forward svc/prometheus-grafana 8085:80
+ ```
+
+ Navigate to http://localhost:8085/
