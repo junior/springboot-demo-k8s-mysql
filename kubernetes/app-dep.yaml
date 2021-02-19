@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp
+  labels:
+    app: demoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoapp
+  template:
+    metadata:
+      labels:
+        app: demoapp
+    spec:
+      containers:
+      - name: demoapp
+        image: ghcr.io/junior/springbootdemo:1.0.0
+        imagePullPolicy: Never
+        env:
+        - name: MYSQL_HOST
+          value: mysql
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_EXTRAS
+          value: "?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false"
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: database
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: password
+        - name: JAVA_OPTS
+          value: -Xms512m -Xmx1024m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+        ports:
+        - name: http
+          containerPort: 8081
+        resources:
+          limits:
+            cpu: 800m
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 1024Mi
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: http
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: http
+      # imagePullSecrets:
+      # - name: ocirsecrets
