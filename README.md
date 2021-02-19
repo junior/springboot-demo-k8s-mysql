@@ -44,7 +44,7 @@ git clone https://github.com/junior/springboot-demo-k8s-mysql.git
 cd springboot-demo-k8s-mysql/kubernetes
 ```
 
-### Deploy MySQL 5.7
+### Deploy MySQL 5.6
 
 #### Create PVC for MySQl on Oracle Cloud Infrastructure using CSI for Block Volume
 
@@ -95,7 +95,7 @@ kubectl logs -l app=demoapp --follow
 ##### Connect to mysql
 
 ```shell
-kubectl run -it --rm --image=mysql:5.7 --restart=Never mysql-client -- mysql DB -h mysql -pr00tDefaultPassword1!
+kubectl run -it --rm --image=mysql:6 --restart=Never mysql-client -- mysql DB -h mysql -pr00tDefaultPassword1!
 ```
 
 Press enter
