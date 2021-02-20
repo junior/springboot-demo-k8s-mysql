@@ -36,12 +36,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Change IMAGE_NAME to lowercase
+      - name: Build image
         run: |
           IMAGE_NAME=$(echo $IMAGE_NAME | tr '[A-Z]' '[a-z]')
-      
-      - name: Build image
-        run: docker image build --pull --no-cache . --file Dockerfile --tag $IMAGE_NAME
+          docker image build --pull --no-cache . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -71,12 +69,14 @@ jobs:
           SPECIAL=`echo $SEM | sed -e "s#$SEMREG#\4#"`
           # add semantic tags
           if [ "$MAJOR" != "$SEM" ] && [ -z "$SPECIAL" ]; then
-              TAGS="$SEM $MAJOR.$MINOR $MAJOR latest"
+              TAGS="latest $SEM $MAJOR.$MINOR $MAJOR"
               if [ -n "$SPECIAL" ]; then
                   TAGS="$MAJOR.$MINOR.$PATCH $TAGS"
               fi
           fi
 
+          IMAGE_NAME=$(echo $IMAGE_NAME | tr '[A-Z]' '[a-z]')
+          
           for tag in $TAGS; do
             echo -e "\nTagging and pushing: ${IMAGE_ID}:${tag}"
             docker image tag $IMAGE_NAME $IMAGE_ID:$tag
