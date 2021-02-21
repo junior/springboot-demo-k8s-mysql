@@ -17,10 +17,12 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-# If Docker registry if ghcr.io, is necessary to create a Personal Access Token and 
-# store as the secret DOCKER_PASSWORD and the Docker user name will assume github.actor
+# If Docker registry is ghcr.io, is necessary to create a Personal Access Token and 
+# store as the secret DOCKER_PASSWORD. For ghcr.io, the Docker user name and Docker
+# repository will assume github.actor.
+#
 # If not ghcr.io (e.g. iad.ocir.io) is necessary to create secrets DOCKER_REGISTRY_URL for 
-# the Registry url, DOCKER_REPOSITORY for the repository (e.g.: oracle/demos), and 
+# the Registry url, DOCKER_REPOSITORY for the repository (e.g.: tenancy/application), and 
 # DOCKER_USERNAME and DOCKER_PASSWORD with the Docker Registry credentials
 env:
   IMAGE_NAME: SPRINGBOOTDEMO
@@ -68,11 +70,9 @@ jobs:
 
       - name: Push image
         run: |
-          echo -e "\n${IMAGE_ID}1"
           # Change all uppercase to lowercase
           IMAGE_ID=${{ env.IMAGE_ID }}
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          echo -e "\n${IMAGE_ID}1"
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
@@ -100,11 +100,15 @@ jobs:
 
           IMAGE_NAME=$(echo $IMAGE_NAME | tr '[A-Z]' '[a-z]')
           
+          echo "::group::Tagging image"
           for tag in $TAGS; do
             echo -e "\nTagging: ${IMAGE_ID}:${tag}"
             docker image tag $IMAGE_NAME $IMAGE_ID:$tag
           done
+          echo "::endgroup::"
           
-          echo -e "\nPushing: ${IMAGE_ID}:${tag}"
+          echo "::group::Pushing image(s)"
+          echo -e "\nPushing all tagged tags: ${IMAGE_ID}:${tag}"
           docker image push --all-tags $IMAGE_ID
+          echo "::endgroup::"
     
