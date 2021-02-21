@@ -25,7 +25,7 @@ spec:
         - name: MYSQL_PORT
           value: "3306"
         - name: MYSQL_EXTRAS
-          value: "?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false"
+          value: "?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true"
         - name: MYSQL_DATABASE
           valueFrom:
             secretKeyRef:
