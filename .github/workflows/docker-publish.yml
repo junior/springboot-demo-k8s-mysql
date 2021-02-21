@@ -16,9 +16,10 @@ on:
 env:
   IMAGE_NAME: SPRINGBOOTDEMO
   DOCKER_REPOSITORY: junior
-  # If Docker registry not ghcr.io (e.g. iad.ocir.io), is necessary to create
-  # secrets DOCKER_USERNAME and DOCKER_PASSWORD with the 
-  # Docker Registry credentials
+  # If Docker registry if ghcr.io, is necessary to create a Personal Access Token and 
+  # store as the secret DOCKER_PASSWORD and the Docker user name will assume github.actor
+  # If not ghcr.io (e.g. iad.ocir.io) is necessary to create secrets DOCKER_USERNAME and 
+  # DOCKER_PASSWORD with the Docker Registry credentials
   DOCKER_REGISTRY_URL: ghcr.io
 
 jobs:
@@ -49,7 +50,7 @@ jobs:
 
       - name: Log into ghcr.io registry
         if: env.DOCKER_REGISTRY_URL == 'ghcr.io'
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         
       - name: Log into Docker registry
         if: env.DOCKER_REGISTRY_URL != 'ghcr.io'
