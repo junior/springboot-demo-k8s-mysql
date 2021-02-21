@@ -10,9 +10,9 @@ on:
     tags:
       - v*
       
-#     paths:
-#       # Process updates on the src folder
-#       - 'src/**'
+    paths:
+      # Process updates on the src folder
+      - 'src/**'
 
   # Run tests for any PRs.
   pull_request:
